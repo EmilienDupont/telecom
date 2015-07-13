@@ -284,7 +284,8 @@ aside {
 
 var budget = 10;
 var population = 1;
-var radius = 100;
+var radius = 200;
+var polyVertices = [];
 
 
 //Width and height
@@ -359,11 +360,20 @@ function addPoint() {
 function redraw() {
   pathG.selectAll("path").remove("path");
 
+  polyVertices = [];
+
   pathG.selectAll("path")
        .data(d3.geom.voronoi(vertices))
        .enter()
        .append("path")
-       .attr("d", polygon)
+       .attr("d", function(d) {
+          var polyPoints = [];
+          for (var i = 0; i < d.length; i++) {
+            polyPoints.push(d[i]);
+          }
+          polyVertices.push(polyPoints);
+          return "M" + d.join("L") + "Z";
+        })
        .attr("fill", "none")
        .attr("stroke-width", 2)
        .attr("stroke", "gray");
@@ -391,7 +401,7 @@ function compute() {
   var sites = [];
   for (var i = 0; i < transmitters.length; i++) {
     var site = [];
-    for (var j = 0; j < vertices.length; j++) {
+    for (var j = 0; j < polyVertices.length; j++) {
       if (sqDist(transmitters[i], vertices[j]) <= radius*radius) {
         site.push(j);
       }
@@ -422,10 +432,15 @@ function serverResponse(error, data) {
       if ('solution' in data) {
           // Import solution and put it into correct format
           var solution = data['solution'];
+          var solTowers = solution[0];
+          var solRegions = solution[1];
+
+          console.log('towers', solTowers);
+          console.log('regions', solRegions);
 
           var towers = [];
-          for (var i = 0; i < solution.length; i++) {
-            if (solution[i] > .5) {
+          for (var i = 0; i < solTowers.length; i++) {
+            if (solTowers[i] > .5) {
               towers.push(transmitters[i]);
             }
           }
@@ -446,7 +461,32 @@ function serverResponse(error, data) {
                     .duration(500)
                     .delay(function(d, i) { return i*50; })
                     .attr("r", radius)
-                    .attr("opacity", .5);
+                    .attr("opacity", .2);
+
+          solutionG.selectAll("path").remove("path");
+
+          solutionG.selectAll("path")
+               .data(d3.geom.voronoi(vertices))
+               .enter()
+               .append("path")
+               .attr("d", polygon)
+               .attr("opacity", .5)
+               .attr("fill", function(d,i) {
+                                if ( solRegions[i] > .5 ) {
+                                  return "purple";
+                                } else {
+                                  return "none";
+                                }
+                             })
+               .attr("stroke-width", 2)
+               .attr("stroke", function(d,i) {
+                                if ( solRegions[i] > .5 ) {
+                                  return "rgb(102,0,102)";
+                                } else {
+                                  return "none";
+                                }
+                             });
+
       }
    }
 }
