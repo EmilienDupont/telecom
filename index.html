@@ -369,7 +369,20 @@ function redraw() {
        .attr("d", function(d) {
           var polyPoints = [];
           for (var i = 0; i < d.length; i++) {
-            polyPoints.push(d[i]);
+            var vertex = [];
+            vertex.push(d[i][0]);
+            vertex.push(d[i][1]);
+            if (vertex[0] < 0) {
+              vertex[0] = 0;
+            } else if (vertex[0] > width) {
+              vertex[0] = width;
+            }
+            if (vertex[1] < 0) {
+              vertex[1] = 0;
+            } else if (vertex[1] > height) {
+              vertex[1] = height;
+            }
+            polyPoints.push(vertex);
           }
           polyVertices.push(polyPoints);
           return "M" + d.join("L") + "Z";
@@ -377,6 +390,8 @@ function redraw() {
        .attr("fill", "none")
        .attr("stroke-width", 2)
        .attr("stroke", "gray");
+
+  console.log(polyVertices);
 }
 
 // Function that actually joins the different points of polygon
@@ -402,9 +417,14 @@ function compute() {
   for (var i = 0; i < transmitters.length; i++) {
     var site = [];
     for (var j = 0; j < polyVertices.length; j++) {
-      if (sqDist(transmitters[i], vertices[j]) <= radius*radius) {
-        site.push(j);
+      // Region is covered if and only if all vertices of the polygon
+      // are within the radius of a tower
+      var polyPoint = polyVertices[j];
+      var inside = 1;
+      for (var k = 0; k < polyPoint.length; k++) {
+        if (sqDist(transmitters[i], polyPoint[k]) > radius*radius) { inside = 0; }
       }
+      if (inside) { site.push(j) };
     }
     sites.push(site);
   }
@@ -461,7 +481,7 @@ function serverResponse(error, data) {
                     .duration(500)
                     .delay(function(d, i) { return i*50; })
                     .attr("r", radius)
-                    .attr("opacity", .2);
+                    .attr("opacity", .0);
 
           solutionG.selectAll("path").remove("path");
 
@@ -481,7 +501,8 @@ function serverResponse(error, data) {
                .attr("stroke-width", 2)
                .attr("stroke", function(d,i) {
                                 if ( solRegions[i] > .5 ) {
-                                  return "rgb(102,0,102)";
+                                  return "none";
+                                  //return "rgb(102,0,102)";
                                 } else {
                                   return "none";
                                 }
