@@ -374,15 +374,38 @@ function polygon(d) {
   return "M" + d.join("L") + "Z";
 }
 
+// Function to compute square distance between two points
+function sqDist(a,b) {
+  dx = a[0] - b[0];
+  dy = a[1] - b[1];
+  return (dx*dx + dy*dy);
+}
+
 function compute() {
-  pop = [];
+  var pop = [];
   for (var i = 0; i < vertices.length; i++) {
     pop.push(population);
   }
 
   // For sites check all points that are within distance of tower
+  var sites = [];
+  for (var i = 0; i < transmitters.length; i++) {
+    var site = [];
+    for (var j = 0; j < vertices.length; j++) {
+      if (sqDist(transmitters[i], vertices[j]) <= radius*radius) {
+        site.push(j);
+      }
+    }
+    sites.push(site);
+  }
+
+  console.log('sites', sites);
 
   // Each site should have a different or the same price?
+  var cost = [];
+  for (var i = 0; i < transmitters.length; i++) {
+    cost.push(1.8);
+  }
 
   d3.json('/resource')
     .header('Content-Type', 'application/json')
