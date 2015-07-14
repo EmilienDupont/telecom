@@ -115,20 +115,21 @@ aside {
 }
 
 .client {
-  fill: white;
+  fill: rgb(159,171,159);
   stroke: black;
-  stroke-width: 2;
+  stroke-width: 0;
 }
 
 .transmitter {
-  fill: purple;
-  stroke: purple;
   stroke-width: 3;
   stroke-opacity: .3;
 }
 
 .cover {
   fill: purple;
+  stroke-width: 2;
+  stroke: black;
+  stroke-opacity: .3;
 }
 
 </style>
@@ -287,10 +288,12 @@ var population = 1;
 var radius = 200;
 var polyVertices = [];
 
-
 //Width and height
 var width = 800;
 var height = 500;
+
+var voronoi = d3.geom.voronoi()
+    .clipExtent([[0, 0], [width, height]]);
 
 var svg = d3.select("#demoarea")
               .append("svg")
@@ -332,16 +335,18 @@ circleG.selectAll("circle")
        .attr("cx", function(d) { return d[0]; })
        .attr("cy", function(d) { return d[1]; })
        .attr("class", "client")
-       .attr("r", 4);
+       .attr("r", 2);
 
-transG.selectAll("circle")
-       .data(transmitters)
-       .enter()
-       .append("circle")
-       .attr("cx", function(d) { return d[0]; })
-       .attr("cy", function(d) { return d[1]; })
-       .attr("class", "transmitter")
-       .attr("r", 7);
+var transSelection = transG.selectAll("circle")
+                          .data(transmitters)
+                          .enter()
+                          .append("circle")
+                          .attr("cx", function(d) { return d[0]; })
+                          .attr("cy", function(d) { return d[1]; })
+                          .attr("class", "transmitter")
+                          .attr("r", 7);
+
+transSelection.attr("fill", "gray").attr("stroke", "gray");
 
 redraw();
 
@@ -353,7 +358,7 @@ function addPoint() {
          .attr("cx", point[0])
          .attr("cy", point[1])
          .attr("class", "client")
-         .attr("r", 4);
+         .attr("r", 2);
   redraw();
 }
 
@@ -363,26 +368,13 @@ function redraw() {
   polyVertices = [];
 
   pathG.selectAll("path")
-       .data(d3.geom.voronoi(vertices))
+       .data(voronoi(vertices))
        .enter()
        .append("path")
        .attr("d", function(d) {
           var polyPoints = [];
           for (var i = 0; i < d.length; i++) {
-            var vertex = [];
-            vertex.push(d[i][0]);
-            vertex.push(d[i][1]);
-            if (vertex[0] < 0) {
-              vertex[0] = 0;
-            } else if (vertex[0] > width) {
-              vertex[0] = width;
-            }
-            if (vertex[1] < 0) {
-              vertex[1] = 0;
-            } else if (vertex[1] > height) {
-              vertex[1] = height;
-            }
-            polyPoints.push(vertex);
+            polyPoints.push(d[i]);
           }
           polyVertices.push(polyPoints);
           return "M" + d.join("L") + "Z";
@@ -391,7 +383,7 @@ function redraw() {
        .attr("stroke-width", 2)
        .attr("stroke", "gray");
 
-  console.log(polyVertices);
+  console.log('polyVertices', polyVertices);
 }
 
 // Function that actually joins the different points of polygon
@@ -431,7 +423,7 @@ function compute() {
 
   console.log('sites', sites);
 
-  // Each site should have a different or the same price?
+  // Each site has the same price
   var cost = [];
   for (var i = 0; i < transmitters.length; i++) {
     cost.push(1.8);
@@ -465,6 +457,14 @@ function serverResponse(error, data) {
             }
           }
 
+          transSelection.attr("fill", function(d, i) { if (solTowers[i] > .5) { return "purple"; }
+                                                       else { return "gray"; }
+                                                     })
+                        .attr("stroke", function(d, i) { if (solTowers[i] > .5) { return "purple"; }
+                                                       else { return "gray"; }
+                                                     });
+
+
           solutionG.selectAll("circle").remove("circle");
 
           var signalArea = solutionG.selectAll("circle")
@@ -478,22 +478,22 @@ function serverResponse(error, data) {
                     .attr("opacity", 0);
 
           signalArea.transition()
-                    .duration(500)
+                    .duration(700)
                     .delay(function(d, i) { return i*50; })
                     .attr("r", radius)
-                    .attr("opacity", .0);
+                    .attr("opacity", .2);
 
           solutionG.selectAll("path").remove("path");
 
-          solutionG.selectAll("path")
-               .data(d3.geom.voronoi(vertices))
+          var solutionVoro = solutionG.selectAll("path")
+               .data(voronoi(vertices))
                .enter()
                .append("path")
                .attr("d", polygon)
-               .attr("opacity", .5)
+               .attr("opacity", 0)
                .attr("fill", function(d,i) {
                                 if ( solRegions[i] > .5 ) {
-                                  return "purple";
+                                  return "yellow";
                                 } else {
                                   return "none";
                                 }
@@ -501,12 +501,16 @@ function serverResponse(error, data) {
                .attr("stroke-width", 2)
                .attr("stroke", function(d,i) {
                                 if ( solRegions[i] > .5 ) {
-                                  return "none";
-                                  //return "rgb(102,0,102)";
+                                  return "rgb(102,0,102)";
                                 } else {
                                   return "none";
                                 }
                              });
+
+            solutionVoro.transition()
+                    .duration(500)
+                    .delay(function(d, i) { return i*30; })
+                    .attr("opacity", .5);
 
       }
    }
