@@ -456,7 +456,7 @@ function compute() {
     cost.push(1.8);
   }
 
-  d3.json('/resource')
+  d3.json('/telecom')
     .header('Content-Type', 'application/json')
     .post(JSON.stringify({'pop': pop,
                           'sites': sites,
