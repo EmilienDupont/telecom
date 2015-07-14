@@ -290,6 +290,7 @@ var budget = 10;
 var population = 1;
 var radius = 200;
 var polyVertices = [];
+var formatAsPercentage = d3.format(".1%")
 
 //Width and height
 var width = 800;
@@ -362,6 +363,9 @@ function addPoint() {
          .attr("cy", point[1])
          .attr("class", "client")
          .attr("r", 2);
+  solutionG.selectAll("circle").remove("circle");
+  solutionG.selectAll("path").remove("path");
+  solutionG.selectAll("text").remove("text");
   redraw();
 }
 
@@ -460,6 +464,14 @@ function serverResponse(error, data) {
             }
           }
 
+          var covered = 0;
+          for (var i = 0; i < solRegions.length; i++) {
+            if (solRegions[i] > .5) {
+              covered = covered + 1;
+            }
+          }
+          covered = covered/solRegions.length; // percentage of regions covered
+
           transSelection.attr("fill", function(d, i) { if (solTowers[i] > .5) { return "green"; }
                                                        else { return "rgb(150,0,0)"; }
                                                      })
@@ -511,11 +523,26 @@ function serverResponse(error, data) {
                                 }
                              });
 
-            solutionVoro.transition()
+          solutionVoro.transition()
                     .duration(500)
                     .delay(function(d, i) { return 500 + i*30; })
                     .attr("opacity", .5);
 
+          solutionG.selectAll("text").remove();
+
+          var coveredText = solutionG.append("text")
+              .text(formatAsPercentage(covered) + " Coverage")
+              .attr("x", width/2)
+              .attr("y", 40)
+              .attr("font-family", "sans-serif")
+              .attr("font-size", "20px")
+              .attr("fill", "white")
+              .attr("text-anchor", "middle")
+              .attr("opacity", 0);
+
+          coveredText.transition()
+                    .duration(500)
+                    .attr("opacity", 1);
       }
    }
 }
