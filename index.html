@@ -115,7 +115,7 @@ aside {
 }
 
 .client {
-  fill: rgb(159,171,159);
+  fill: rgb(150,150,150);
   stroke: black;
   stroke-width: 0;
 }
@@ -126,10 +126,9 @@ aside {
 }
 
 .cover {
-  fill: purple;
   stroke-width: 2;
   stroke: black;
-  stroke-opacity: .3;
+  stroke-opacity: .5;
 }
 
 </style>
@@ -265,6 +264,10 @@ aside {
     </div>
     <div class="section" id="demo">
       <h2><a href="#demo" name="demo">Live Demo</a></h2>
+
+      <p> Note that region is counted as covered only if it is entirely covered by one cell tower
+      (restriction on data or something like that)</p>
+
       <div id="demoarea">
       </div>
       <button class="pure-button" onclick="compute()">Compute</button>
@@ -307,7 +310,7 @@ backgroundG.append("rect")
            .attr("y", 0)
            .attr("width", width)
            .attr("height", height)
-           .attr("fill", "rgb(219,231,219)");
+           .attr("fill", "rgb(233,233,233)");
 
 // Initial points
 var vertices = d3.range(50).map(function(d) {
@@ -346,7 +349,7 @@ var transSelection = transG.selectAll("circle")
                           .attr("class", "transmitter")
                           .attr("r", 7);
 
-transSelection.attr("fill", "gray").attr("stroke", "gray");
+transSelection.attr("fill", "purple").attr("stroke", "purple");
 
 redraw();
 
@@ -457,11 +460,11 @@ function serverResponse(error, data) {
             }
           }
 
-          transSelection.attr("fill", function(d, i) { if (solTowers[i] > .5) { return "purple"; }
-                                                       else { return "gray"; }
+          transSelection.attr("fill", function(d, i) { if (solTowers[i] > .5) { return "green"; }
+                                                       else { return "rgb(150,0,0)"; }
                                                      })
-                        .attr("stroke", function(d, i) { if (solTowers[i] > .5) { return "purple"; }
-                                                       else { return "gray"; }
+                        .attr("stroke", function(d, i) { if (solTowers[i] > .5) { return "green"; }
+                                                       else { return "rgb(150,0,0)"; }
                                                      });
 
 
@@ -474,14 +477,15 @@ function serverResponse(error, data) {
                     .attr("cx", function(d) { return d[0]; })
                     .attr("cy", function(d) { return d[1]; })
                     .attr("class", "cover")
+                    .attr("fill", "green")
                     .attr("r", 1)
                     .attr("opacity", 0);
 
           signalArea.transition()
-                    .duration(700)
+                    .duration(500)
                     .delay(function(d, i) { return i*50; })
                     .attr("r", radius)
-                    .attr("opacity", .2);
+                    .attr("opacity", .1);
 
           solutionG.selectAll("path").remove("path");
 
@@ -493,7 +497,7 @@ function serverResponse(error, data) {
                .attr("opacity", 0)
                .attr("fill", function(d,i) {
                                 if ( solRegions[i] > .5 ) {
-                                  return "yellow";
+                                  return "green";
                                 } else {
                                   return "none";
                                 }
@@ -509,7 +513,7 @@ function serverResponse(error, data) {
 
             solutionVoro.transition()
                     .duration(500)
-                    .delay(function(d, i) { return i*30; })
+                    .delay(function(d, i) { return 500 + i*30; })
                     .attr("opacity", .5);
 
       }
