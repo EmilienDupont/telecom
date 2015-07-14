@@ -268,6 +268,8 @@ aside {
       <p> Note that region is counted as covered only if it is entirely covered by one cell tower
       (restriction on data or something like that)</p>
 
+      <p> Stuff that could be added: ABility to change budget, ability to change radius of the towers.</p>
+
       <div id="demoarea">
       </div>
       <button class="pure-button" onclick="compute()">Compute</button>
@@ -354,9 +356,27 @@ transSelection.attr("fill", "purple").attr("stroke", "purple");
 
 redraw();
 
+function inArray (array, point) {
+  var p0 = point[0];
+  var p1 = point[1];
+  var bool = false;
+  for (i = 0; i < array.length; i++) {
+    pointprime = array[i];
+    if (p0 === pointprime[0] && p1 === pointprime[1]) {
+      bool = true;
+      break;
+    }
+  }
+  return bool;
+}
+
 function addPoint() {
   var point = d3.mouse(this);
   console.log(point)
+  if (inArray(vertices, point)) {
+    console.log('point already exists!');
+    return;
+  }
   vertices.push(point);
   circleG.append("circle")
          .attr("cx", point[0])
