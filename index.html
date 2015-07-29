@@ -195,7 +195,7 @@ aside {
         population.
       </p>
 
-      <aside>A cell phone tower in Illinois. </aside>
+      <aside>A typical cell phone tower.</aside>
 
       <p>
         The goal is then to choose at which of the potential locations the
@@ -349,15 +349,38 @@ aside {
     </div>
     <div class="section" id="demo">
       <h2><a href="#demo" name="demo">Live Demo</a></h2>
+      <p>
+        Below is a visualization of the example we have discussed.
+      </p>
 
-      Area has been split into regions of equal population
+      <p>
+        Cell tower locations are represented by:
+	<svg height="20" width="20">
+	  <circle cx="10" cy="10" r="8" stroke="rgb(10,10,10)" stroke-width="3" fill="rgb(80,80,80)" />
+	</svg>
+      </p>
 
-      <p> Note that region is counted as covered only if it is entirely covered by one cell tower
-      (restriction on data or something like that)</p>
+      <p>
+        The area has been split into regions of equal population, each
+        of them represented by a polygon on the map. To add an extra
+        region, simply click on the map.
+      </p>
 
-      <p> Stuff that could be added: ABility to change budget, ability to change radius of the towers.</p>
+      <p>
+        To compute the optimal location of cell towers click "Compute".
+        If the tower is built, the cell tower location and the regions
+        that are covered will turn green. Note that a region is considered
+        to be covered only if it is entirely covered by <em>one</em> cell
+        tower.
+      </p>
+
+      <p>
+        The budget currently allows for the construction of 5 towers, but
+        you can vary this using the slider below.
+      </p>
+
       <input type="range" min = 1 max = 10 step = 1 id="budget" value="5" oninput="outputUpdate(value)" class="slider-width">
-      <output for=budget id=costDisplay>5</output>
+      <output for=budget id=costDisplay>5</output> Towers
       <script>
       function outputUpdate(value) {
         document.querySelector('#costDisplay').value = value;
