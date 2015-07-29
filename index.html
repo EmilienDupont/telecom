@@ -142,20 +142,78 @@ aside {
   </ul>
   <div id="container">
     <div class="section" id="intro">
-      <h1>Telecom Tower Covering</h1>
+      <h1>Cell Tower Coverage</h1>
         <subtitle>with integer programming and Gurobi</subtitle>
     </div>
 
+      <p>
+        In this example we'll solve a simple covering problem: how to
+        build cell towers to provide signal to the largest area possible.
+      </p>
+
+      <p>
+        We'll construct a mathematical model of the business problem,
+        implement this model in Gurobi's Python interface, and compute and
+        visualize an optimal solution.
+      </p>
+
+      <p>
+        Although your own business may not involve operating a
+        telecommunications network, the same basic techniques used in this
+        example can be used for other applications in ?????.
+      </p>
+
     <div class="section" id="problem">
       <h2><a href="#problem" name="problem">Problem Description</a></h2>
-      Problem description goes here
+
+      <div style="float:right;">
+        <a href="https://en.wikipedia.org/wiki/Cell_site">
+          <img src="cellphonetower.jpg" alt="Cell tower" style="width:200px;">
+        </a>
+      </div>
+
       <p>
+        A <a href="https://en.wikipedia.org/wiki/Cell_site">cell tower</a>
+        is a site where antennae and electronic equipment for communications
+        are placed.
       </p>
+
+      <p>
+        In this example, a telecom company needs to build a set of cell towers
+        to provide signal for a large region. A number of potential locations
+        for building the towers have been determined. The choice of these
+        locations is based on several factors, including how well the tower
+        blends in to the surrouding environment and the height of the
+        terrain.
+      </p>
+
+      <p>
+        The towers have a fixed range and due to budget constraints only a
+        limited number of them can be built. Given these restrictions, the
+        company wishes to provide coverage to as large a fraction of the
+        population as possible.
+      </p>
+
+      <p>
+        To simplify the problem, the company has split the area it wishes
+        to cover into a set of regions, each of which has a known
+        population.
+      </p>
+
+      <aside>A cell phone tower in Illinois. </aside>
+
+      <p>
+        The goal is then to choose at which of the potential locations the
+        company should build cell towers to provide coverage to as many
+        people as possible.
+      </p>
+
     </div>
     <div class="section" id="model">
       <h2><a href="#model" name="model">Mathematical Model</a></h2>
 
       <p>Model description goes here.</p>
+
       <p>
       Let $R$ be the set of regions. For each of these regions we associate a binary variable
       which we index by $j$
@@ -167,6 +225,7 @@ aside {
       \]
       The population in region $j$ is denoted by $p_j$.
       </p>
+
       <p>
         Let $T$ be the set of potential sites where we can build the towers. We associate a binary
         variable with each of these sites which we index by $i$
@@ -264,6 +323,8 @@ aside {
     </div>
     <div class="section" id="demo">
       <h2><a href="#demo" name="demo">Live Demo</a></h2>
+
+      Area has been split into regions of equal population
 
       <p> Note that region is counted as covered only if it is entirely covered by one cell tower
       (restriction on data or something like that)</p>
