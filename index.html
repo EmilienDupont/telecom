@@ -356,7 +356,13 @@ aside {
       (restriction on data or something like that)</p>
 
       <p> Stuff that could be added: ABility to change budget, ability to change radius of the towers.</p>
-
+      <input type="range" min = 1 max = 10 step = 1 id="budget" value="5" oninput="outputUpdate(value)" class="slider-width">
+      <output for=budget id=costDisplay>5</output>
+      <script>
+      function outputUpdate(value) {
+        document.querySelector('#costDisplay').value = value;
+      }
+      </script>
       <div id="demoarea">
       </div>
       <button class="pure-button" onclick="compute()">Compute</button>
@@ -375,7 +381,7 @@ aside {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script>
 
-var budget = 10;
+var budget = 5;
 var population = 1;
 var radius = 200;
 var polyVertices = [];
@@ -497,8 +503,6 @@ function redraw() {
        .attr("fill", function(d,i) { return colorGradient[i%11]; })
        .attr("stroke-width", 1)
        .attr("stroke", "black");
-
-  console.log('polyVertices', polyVertices);
 }
 
 // Function that actually joins the different points of polygon
@@ -514,6 +518,8 @@ function sqDist(a,b) {
 }
 
 function compute() {
+  budget = parseInt(document.getElementById("budget").value);
+
   var pop = [];
   for (var i = 0; i < vertices.length; i++) {
     pop.push(population);
@@ -541,7 +547,7 @@ function compute() {
   // Each site has the same price
   var cost = [];
   for (var i = 0; i < transmitters.length; i++) {
-    cost.push(1.8);
+    cost.push(1);
   }
 
   d3.json('/telecom')
@@ -644,7 +650,9 @@ function serverResponse(error, data) {
               .attr("y", 40)
               .attr("font-family", "sans-serif")
               .attr("font-size", "20px")
+              .attr("font-weight", 700)
               .attr("fill", "white")
+              .attr("stroke", "black")
               .attr("text-anchor", "middle")
               .attr("opacity", 0);
 
