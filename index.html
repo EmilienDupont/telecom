@@ -188,7 +188,7 @@ aside {
       </p>
 
       <p>
-        The towers have a fixed range and due to budget constraints only a
+        The towers have a fixed range and due to budget constraints, only a
         limited number of them can be built. Given these restrictions, the
         company wishes to provide coverage to as large a fraction of the
         population as possible.
@@ -212,64 +212,91 @@ aside {
     <div class="section" id="model">
       <h2><a href="#model" name="model">Mathematical Model</a></h2>
 
-      <p>Model description goes here.</p>
+      <p>
+        Our example is an instance of the
+        <a href="http://www.geog.ucsb.edu/~forest/G294download/MAX_COVER_RLC_CSR.pdf">
+        Maximal Covering Location Problem</a>. It is also related to
+        the <a href="https://en.wikipedia.org/wiki/Set_cover_problem">
+        Set Cover Problem</a>. Covering problems occur in many different
+        fields and can be applied to a large number of problems, for
+        example in ?????. We'll describe the mathematical model for this
+        business problem in terms of cell towers, but it's important to
+        remember that the techniques used here can be applied to a very
+        large set of business problems.
+      </p>
 
       <p>
-      Let $R$ be the set of regions. For each of these regions we associate a binary variable
-      which we index by $j$
-      \[
-      r_j = \left\{\begin{array}{ll}
-             1 & \text{if community $j$ is covered}\\
-             0 & \mathrm{otherwise}
-            \end{array}\right.
-      \]
-      The population in region $j$ is denoted by $p_j$.
+        First, let $R$ be the set of regions. For each of these regions
+        we associate a binary variable which we index by $j$
+        \[
+        r_j = \left\{\begin{array}{ll}
+               1 & \text{if region $j$ is covered}\\
+               0 & \mathrm{otherwise}
+              \end{array}\right.
+        \]
+        The population in region $j$ is denoted by $p_j$.
       </p>
 
       <p>
-        Let $T$ be the set of potential sites where we can build the towers. We associate a binary
-        variable with each of these sites which we index by $i$
-      \[
-      t_i = \left\{\begin{array}{ll}
-             1 & \text{if tower $i$ is built}\\
-             0 & \mathrm{otherwise}
-            \end{array}\right.
-      \]
-      The cost of setting up the tower at site $i$ is denoted by $c_i$.
+        Secondly, we let $T$ denote the set of potential sites where we
+        can build the towers. We associate a binary variable with each
+        of these sites which we index by $i$
+        \[
+        t_i = \left\{\begin{array}{ll}
+               1 & \text{if tower $i$ is built}\\
+               0 & \mathrm{otherwise}
+              \end{array}\right.
+        \]
+        The cost of setting up the tower at site $i$ is denoted by $c_i$.
       </p>
-      <p> Furthermore we add binary constants indexed by $i$ and $j$ such that
-      \[
-      \text{cover}_{ij} = \left\{\begin{array}{ll}
-             1 & \text{if tower $i$ covers region $j$}\\
-             0 & \mathrm{otherwise}
-            \end{array}\right.
-      \]</p>
-      <p> Now if a region $r_j$ is covered ($r_j = 1$) then we must have a tower built at site $t_i$ ($t_i = 1$)
-      which covers region $j$ ($cover_{ij} = 1$). Now, we can have more than one tower covering a region, so this
-      yields the constraint
-      \[
-      \sum_{i \in T} \text{cover}_{ij} t_{i} \geq r_j
-      \]
-      for each region $r_j \in R$</p>
-      <p> In addition, we cannot exceed the allocated budget. So we have the constraint
-      \[
-      \sum_{i \in T} c_{i} t_{i} \leq \text{budget}
-      \]
-      </p>
-      <p> We seek to maximise the total population covered by the towers, so finally the problem becomes
 
-       \[
-      \begin{array}{ll}
-      \text{maximize} & \sum_{j \in R} p_j r_j \\
-      \text{subject to} & \sum_{i \in T} \text{cover}_{ij} t_{i} \geq r_j \quad \forall r_j \in R\\
-                        & \sum_{i \in T} c_{i} t_{i} \leq \text{budget} \\
-                        & t_i \in \{ 0, 1 \} \\
-                        & r_j \in \{ 0, 1 \}
-      \end{array}
-      \]
-
-      in the variables $t_i$ and $r_j$.
+      <p>
+        Furthermore we add binary constants indexed by $i$ and $j$ such
+        that
+        \[
+        \text{cover}_{ij} = \left\{\begin{array}{ll}
+               1 & \text{if tower $i$ covers region $j$}\\
+               0 & \mathrm{otherwise}
+              \end{array}\right.
+        \]
       </p>
+
+      <p>
+        Now if a region $r_j$ is covered ($r_j = 1$) then we must have a
+        tower built at site $t_i$ ($t_i = 1$) which covers region $j$
+        ($cover_{ij} = 1$). Now, we can have more than one tower covering
+        a region, so this yields the constraint
+        \[
+        \sum_{i \in T} \text{cover}_{ij} t_{i} \geq r_j
+        \]
+        for each region $r_j \in R$
+      </p>
+
+      <p>
+        In addition, we cannot exceed the allocated budget. So we have the
+        constraint
+        \[
+        \sum_{i \in T} c_{i} t_{i} \leq \text{budget}
+        \]
+      </p>
+
+      <p>
+        We seek to maximise the total population covered by the towers,
+        so finally the problem becomes
+
+        \[
+       \begin{array}{ll}
+       \text{maximize} & \sum_{j \in R} p_j r_j \\
+       \text{subject to} & \sum_{i \in T} \text{cover}_{ij} t_{i} \geq r_j \quad \forall r_j \in R\\
+                         & \sum_{i \in T} c_{i} t_{i} \leq \text{budget} \\
+                         & t_i \in \{ 0, 1 \} \\
+                         & r_j \in \{ 0, 1 \}
+       \end{array}
+       \]
+
+        in the variables $t_i$ and $r_j$.
+      </p>
+
     </div>
     <div class="section" id="implementation">
       <h2><a href="#implementation" name="implementation">Implementation</a></h2>
@@ -277,14 +304,18 @@ aside {
         Gurobi's Python interface:
       </p>
       <pre>
-      ### CHANGE DATA ###
-      pop = [2, 4, 13, 6, 9, 4, 8, 12, 10, 11, 6, 14, 9, 3, 6]
-      sites = [[0,1,3], [1,2,4], [3,6,7,9], [4,5,7,8], [7,8,11],
-          [6,9,10,11,14], [11,12,13,14]]
-      cost = [1.8, 1.3, 4.0, 3.5, 3.8, 2.6, 2.1]
-      budget = 10
-
       from gurobipy import *
+
+      # Problem Data
+      # Population in each region
+      pop = [523, 690, 420, 1010, 1200, 850, 400, 1008, 950]
+      # Regions covered by each tower
+      sites = [[0,1,5], [0,7,8], [2,3,4,6], [2,5,6],
+               [0,2,6,7,8], [3,4,8]]
+      # Cost to build tower (in millions of dollars)
+      cost = [4.2, 6.1, 5.2, 5.5, 4.8, 9.2]
+      # Allocated budget (in millions of dollars)
+      budget = 20
 
       numR = len(pop) # Number of regions
       numT = len(sites) # Number of sites for towers
@@ -300,8 +331,8 @@ aside {
 
       m = Model()
 
-      t = {} # Binary variables for each site
-      r = {} # Binary variable for each community
+      t = {} # Binary variables for each tower
+      r = {} # Binary variable for each region
 
       for i in range(numT):
           t[i] = m.addVar(vtype=GRB.BINARY, name="t%d" % i)
