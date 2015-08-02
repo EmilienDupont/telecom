@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-# Get the data (data from XPRESS)
+from gurobipy import *
+
+# Sample data
 # units = thousands of people
 pop = [2, 4, 13, 6, 9, 4, 8, 12, 10, 11, 6, 14, 9, 3, 6]
 sites = [[0,1,3], [1,2,4], [3,6,7,9], [4,5,7,8], [7,8,11],
@@ -9,20 +11,10 @@ sites = [[0,1,3], [1,2,4], [3,6,7,9], [4,5,7,8], [7,8,11],
 cost = [1.8, 1.3, 4.0, 3.5, 3.8, 2.6, 2.1]
 budget = 10;
 
-from gurobipy import *
 
 def optimize(pop, sites, cost, budget):
     numR = len(pop) # Number of regions
     numT = len(sites) # Number of sites for towers
-
-    # Create cover matrix
-    cover = {};
-    for i in range(numT):
-        for j in range(numR):
-            if (j in sites[i]):
-                cover[(i,j)] = 1
-            else:
-                cover[(i,j)] = 0
 
     m = Model()
 
@@ -38,7 +30,7 @@ def optimize(pop, sites, cost, budget):
     m.update()
 
     for j in range(numR):
-        m.addConstr(quicksum( cover[(i,j)]*t[i] for i in range(numT) ) >= r[j])
+        m.addConstr(quicksum( t[i] for i in range(numT) if j in sites[i] ) >= r[j])
 
     m.addConstr(quicksum( cost[i]*t[i] for i in range(numT) ) <= budget)
 
@@ -46,15 +38,17 @@ def optimize(pop, sites, cost, budget):
 
     m.optimize()
 
-    solTowers = []
-    solRegions = []
+    selTowers = []
+    selRegions = []
 
     for i in t:
-        solTowers.append(t[i].X)
+        if t[i].X > 0.5:
+            selTowers.append(i)
 
     for j in range(numR):
-        solRegions.append(r[j].X)
+        if r[j].X > 0.5:
+            selRegions.append(j)
 
-    return [solTowers, solRegions]
+    return [selTowers, selRegions]
 
 print optimize(pop, sites, cost, budget)
