@@ -500,10 +500,6 @@ function serverResponse(error, data) {
                     })
              .attr("fill", "yellow");
 
-          console.log(svg.selectAll("circle")
-                         .filter(function(d) {
-                             return solTowers.indexOf(d.id) > -1;
-                                }));
 
           var total_pop = regions.reduce(function (sum, p) { return sum + p.pop; }, 0);
           var covered_pop = regions.reduce(function (sum, p, index) {
