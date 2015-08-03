@@ -496,11 +496,16 @@ function serverResponse(error, data) {
                                    });
 
           mapG.selectAll("path")
-             .filter(function(d) { return ids.indexOf(d.properties.GEOID10) > -1 })
              .transition()
              .duration(500)
              .delay(function(d, i) { return 200 + i*10; })
-             .style("fill", "green");
+             .style("fill", function (d) {
+                                if (ids.indexOf(d.properties.GEOID10) > -1) {
+                                   return "green";
+                                } else {
+                                   return color(d.properties.POP100_RE);
+                                }
+                            });
 
           towerG.selectAll("circle")
              .attr("fill", function(d) {
@@ -512,10 +517,13 @@ function serverResponse(error, data) {
                            });
 
           radiusG.selectAll("circle")
-              .filter(function(d) {
-                        return solTowers.indexOf(d.id) === -1;
-                      })
-               .attr("opacity", 0);
+               .attr("opacity", function (d) {
+                                  if (solTowers.indexOf(d.id) > -1) {
+                                    return 0.2;
+                                  } else {
+                                    return 0;
+                                  }
+                                });
 
           var total_pop = regions.reduce(function (sum, p) { return sum + p.pop; }, 0);
           var covered_pop = regions.reduce(function (sum, p, index) {
