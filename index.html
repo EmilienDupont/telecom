@@ -351,14 +351,11 @@ function allPointsInCircle(pts, circle) {
    });
 }
 
-// Which color is better?
+
 var color = d3.scale.threshold()
     .domain([1, 200, 500, 600, 800, 1000, 2000])
     .range(["#fff7ec", "#fee8c8", "#fdd49e", "#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#b30000", "#7f0000"]);
-    /*.range(["#7BD38B", "#87D690", "#93DA95",
-                     "#9FDE9A", "#ACE29F", "#B8E6A4",
-                     "#C4EAA9", "#D1EEAE", "#DDF2B3",
-                     "#E9F6B8", "#F6FABD"]); */
+
 var data;
 var regions;
 var county;
