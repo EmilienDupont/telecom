@@ -11,109 +11,8 @@
 
                      });
 </script>
-<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
+<link rel="stylesheet" href="http://examples.gurobi.com/base.css">
 <style>
-
-@import url(http://fonts.googleapis.com/css?family=PT+Serif|PT+Serif:b|PT+Serif:i|PT+Sans|PT+Sans:b);
-@import url(http://fonts.googleapis.com/css?family=Lato);
-html {
-   min-width: 1040px;
-}
-
-body {
-   background: #fcfcfa;
-   color: #333;
-   font-family: "PT Serif", serif;
-   /*margin: 0 1em 4em auto;*/
-   position: relative;
-   width: 960px;
-   left: 13em;
-}
-
-h1, h2, h3, h4 { font-family: "Lato", "PT Serif", serif; color: #000; text-rendering: optimizeLegibility; }
-
-h1 {
-  font-size: 64px;
-  line-height: 73px;
-  font-weight: 900;
-  margin-top: 0.67em;
-  margin-right: 0;
-  margin-bottom: 0;
-  margin-left: 0;
-}
-
-h2 {
-   margin-top: 2em;
-}
-
-subtitle {
-   display:block;
-   font-family: "PT Serif", serif;
-   font-size: 32px;
-   font-style: italic;
-   font-weight: 100;
-}
-
-p {
-  line-height: 150%;
-  width: 720px;
-}
-
-a {
-  color: steelblue;
-  cursor: auto;
-}
-
-a:not(:hover) {
-   text-decoration: none;
-}
-
-pre {
-   border-left: solid 2px #ccc;
-   padding-left: 18px;
-   margin: 2em 0 2em -20px;
-}
-
-aside {
-   font-size: small;
-   right: 0;
-   position: absolute;
-   width: 180px;
-}
-
-#nav {
-        left: 5px;
-        font-family: "Lato", serif;
-        font-weight: 700;
-        list-style: none;
-        margin: 0;
-        position: fixed;
-        top: 10px;
-        box-sizing: border-box;
-}
-
-
-#nav li {
-        margin-bottom: 0px;
-}
-
-#nav a {
-        color: #333;
-        display: block;
-        font-size: 14px;
-        border-left: 3px solid #fcfcfa;
-        padding: 5px 10px;
-        text-decoration: none;
-}
-
-#nav a:hover {
-   border-left: 3px solid steelblue;
-}
-
-#nav .current a {
-   border-left: 3px solid steelblue;
-}
-
 .client {
   fill: rgb(150,150,150);
   stroke: black;
@@ -145,8 +44,8 @@ aside {
     <li><a href="#implementation">Implementation</a></li>
     <li><a href="#demo">Live Demo</a></li>
   </ul>
-  <div id="container">
-    <div class="section" id="intro">
+  <div id="example_container">
+    <div class="example_section" id="intro">
       <h1>Cell Tower Coverage</h1>
         <subtitle>with integer programming and Gurobi</subtitle>
     </div>
@@ -168,7 +67,7 @@ aside {
         example can be used for other applications in ?????.
       </p>
 
-    <div class="section" id="problem">
+    <div class="example_section" id="problem">
       <h2><a href="#problem" name="problem">Problem Description</a></h2>
 
       <div style="float:right;">
@@ -214,7 +113,7 @@ aside {
       </p>
 
     </div>
-    <div class="section" id="model">
+    <div class="example_section" id="model">
       <h2><a href="#model" name="model">Mathematical Model</a></h2>
 
       <p>
@@ -292,61 +191,52 @@ aside {
       </p>
 
     </div>
-    <div class="section" id="implementation">
+    <div class="example_section" id="implementation">
       <h2><a href="#implementation" name="implementation">Implementation</a></h2>
       <p>Below is the full implementation of the model (and the associated data) in
         Gurobi's Python interface:
       </p>
-      <pre>
-      from gurobipy import *
+<examplecode>
+from gurobipy import *
 
-      # Problem Data
-      # Population in each region
-      pop = [523, 690, 420, 1010, 1200, 850, 400, 1008, 950]
-      # Regions covered by each tower
-      sites = [[0,1,5], [0,7,8], [2,3,4,6], [2,5,6],
-               [0,2,6,7,8], [3,4,8]]
-      # Cost to build tower (in millions of dollars)
-      cost = [4.2, 6.1, 5.2, 5.5, 4.8, 9.2]
-      # Allocated budget (in millions of dollars)
-      budget = 20
+# Problem Data
+# Population in each region
+pop = [523, 690, 420, 1010, 1200, 850, 400, 1008, 950]
+# Regions covered by each tower
+sites = [[0,1,5], [0,7,8], [2,3,4,6], [2,5,6],
+         [0,2,6,7,8], [3,4,8]]
+# Cost to build tower (in millions of dollars)
+cost = [4.2, 6.1, 5.2, 5.5, 4.8, 9.2]
+# Allocated budget (in millions of dollars)
+budget = 20
 
-      numR = len(pop) # Number of regions
-      numT = len(sites) # Number of sites for towers
+numR = len(pop) # Number of regions
+numT = len(sites) # Number of sites for towers
 
-      # Create cover matrix
-      cover = {};
-      for i in range(numT):
-          for j in range(numR):
-              if (j in sites[i]):
-                  cover[(i,j)] = 1
-              else:
-                  cover[(i,j)] = 0
+m = Model()
 
-      m = Model()
+t = {} # Binary variables for each tower
+r = {} # Binary variable for each region
 
-      t = {} # Binary variables for each tower
-      r = {} # Binary variable for each region
+for i in range(numT):
+  t[i] = m.addVar(vtype=GRB.BINARY, name="t%d" % i)
 
-      for i in range(numT):
-          t[i] = m.addVar(vtype=GRB.BINARY, name="t%d" % i)
+for j in range(numR):
+  r[j] = m.addVar(vtype=GRB.BINARY, name="r%d" % j)
 
-      for j in range(numR):
-          r[j] = m.addVar(vtype=GRB.BINARY, name="r%d" % j)
+m.update()
 
-      m.update()
+for j in range(numR):
+  m.addConstr(quicksum( cover[(i,j)]*t[i] for i in range(numT) ) &gt;= r[j])
 
-      for j in range(numR):
-          m.addConstr(quicksum( cover[(i,j)]*t[i] for i in range(numT) ) >= r[j])
+m.addConstr(quicksum( cost[i]*t[i] for i in range(numT) ) &lt;= budget)
 
-      m.addConstr(quicksum( cost[i]*t[i] for i in range(numT) ) <= budget)
+m.setObjective(quicksum( pop[j]*r[j] for j in range(numR) ), GRB.MAXIMIZE)
 
-      m.setObjective(quicksum( pop[j]*r[j] for j in range(numR) ), GRB.MAXIMIZE)
-
-      m.optimize()
-      </pre>
+m.optimize()
+</examplecode>
     </div>
-    <div class="section" id="demo">
+    <div class="example_section" id="demo">
       <h2><a href="#demo" name="demo">Live Demo</a></h2>
       <p>
         Below is a visualization of the example we have discussed.
@@ -550,7 +440,7 @@ function compute() {
     cost.push(1);
   }
 
-  d3.json('/telecom')
+  d3.json('telecom.py')
     .header('Content-Type', 'application/json')
     .post(JSON.stringify({'pop': pop,
                           'sites': sites,

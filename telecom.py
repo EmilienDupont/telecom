@@ -12,11 +12,14 @@ cost = [1.8, 1.3, 4.0, 3.5, 3.8, 2.6, 2.1]
 budget = 10;
 
 
-def optimize(pop, sites, cost, budget):
+def optimize(pop, sites, cost, budget, output=False):
     numR = len(pop) # Number of regions
     numT = len(sites) # Number of sites for towers
 
     m = Model()
+
+    if not output:
+        m.params.OutputFlag = 0
 
     t = {} # Binary variables for each site
     r = {} # Binary variable for each community
@@ -51,4 +54,15 @@ def optimize(pop, sites, cost, budget):
 
     return [selTowers, selRegions]
 
-print optimize(pop, sites, cost, budget)
+def handleoptimize(jsdict):
+    if 'pop' in jsdict and 'sites' in jsdict and 'cost' in jsdict and 'budget' in jsdict:
+        solution = optimize(jsdict['pop'], jsdict['sites'], jsdict['cost'], jsdict['budget'])
+        return {'solution': solution }
+
+
+if __name__ == '__main__':
+    import json
+    jsdict = json.load(sys.stdin)
+    jsdict = handleoptimize(jsdict)
+    print 'Content-Type: application/json\n\n'
+    print json.dumps(jsdict)
