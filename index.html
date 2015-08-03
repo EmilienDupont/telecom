@@ -312,6 +312,12 @@ var backgroundG = svg.append("g");
 // G object for map
 var mapG = svg.append("g");
 
+// G object for radius
+var radiusG = svg.append("g");
+
+// G object for towers
+var towerG = svg.append("g");
+
 backgroundG.append("rect")
            .attr("x", 0).attr("y", 0)
            .attr("width", width).attr("height", height)
@@ -387,6 +393,8 @@ function addPoint() {
 
    svg.selectAll("circle").attr("fill","rgb(80,80,80)");
 
+   radiusG.selectAll("circle").attr("opacity", .2);
+
    // Reset all block fill colors
    mapG.selectAll("path")
        .style("fill", function (d) { return color(d.properties.POP100_RE); });
@@ -396,15 +404,15 @@ function addPoint() {
    var lonlat = proj.invert(point);
    var tower = { cx: lonlat[0], cy: lonlat[1], r: 10 };
 
-   svg.append("circle")
-      .datum(point)
-      .attr("cx", function (d) { return d[0]; })
-      .attr("cy", function (d) { return d[1]; })
+   radiusG.append("circle")
+      .datum({ pt: point, id: towers.length })
+      .attr("cx", function (d) { return d.pt[0]; })
+      .attr("cy", function (d) { return d.pt[1]; })
       .attr("r", 10 * mile_in_px)
       .attr("opacity", .2);
 
-   svg.append("circle")
-      .datum( { pt: point, id: towers.length })
+   towerG.append("circle")
+      .datum({ pt: point, id: towers.length })
       .attr("cx", function (d) { return d.pt[0]; })
       .attr("cy", function (d) { return d.pt[1]; })
       .attr("r", 4)
@@ -494,12 +502,20 @@ function serverResponse(error, data) {
              .delay(function(d, i) { return 200 + i*10; })
              .style("fill", "green");
 
-          svg.selectAll("circle")
-             .filter(function(d) {
-                        return solTowers.indexOf(d.id) > -1;
-                    })
-             .attr("fill", "yellow");
+          towerG.selectAll("circle")
+             .attr("fill", function(d) {
+                              if (solTowers.indexOf(d.id) > -1) {
+                                    return "yellow";
+                              } else {
+                                    return "none";
+                              }
+                           });
 
+          radiusG.selectAll("circle")
+              .filter(function(d) {
+                        return solTowers.indexOf(d.id) === -1;
+                      })
+               .attr("opacity", 0);
 
           var total_pop = regions.reduce(function (sum, p) { return sum + p.pop; }, 0);
           var covered_pop = regions.reduce(function (sum, p, index) {
