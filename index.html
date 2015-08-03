@@ -422,6 +422,9 @@ var backgroundG = svg.append("g");
 // G object for map
 var mapG = svg.append("g");
 
+// G object for coloring cover
+var coverG = svg.append("g");
+
 backgroundG.append("rect")
            .attr("x", 0).attr("y", 0)
            .attr("width", width).attr("height", height)
@@ -483,6 +486,15 @@ d3.json("capecod.json", function(error, capecod) {
        .style("fill", function (d) { return color(d.properties.POP100_RE); })
      .append("title") // what is this?
        .text(function (d) {return d.properties.GEOID10 + " " + d.properties.POP100_RE; });
+
+  // These are the polygons whose color will change
+  coverG.selectAll("path")
+      .data(county.features)
+     .enter().append("path")
+       .attr("class", "tract")
+       .attr("d", path)
+       .style("fill", "green")
+       .attr("opacity", 0);
 });
 
 var towers = [];
@@ -490,15 +502,7 @@ var towers = [];
 function addPoint() {
    svg.selectAll("text").remove("text");
 
-   mapG.selectAll("path").remove("path");
-
-   // Put original colors back on map
-   mapG.selectAll("path")
-      .data(county.features)
-     .enter().append("path")
-       .attr("class", "tract")
-       .attr("d", path)
-       .style("fill", function (d) { return color(d.properties.POP100_RE); });
+   coverG.selectAll("path").attr("opacity", 0);
 
    var point = d3.mouse(this);
 
@@ -554,13 +558,7 @@ function getRegionCover(cover, regions) {
 }
 
 function compute() {
-  // Put original colors back on map
-  mapG.selectAll("path")
-      .data(county.features)
-     .enter().append("path")
-       .attr("class", "tract")
-       .attr("d", path)
-       .style("fill", function (d) { return color(d.properties.POP100_RE); });
+  coverG.selectAll("path").attr("opacity", 0);
 
   budget = parseInt(document.getElementById("budget").value);
 
@@ -602,13 +600,12 @@ function serverResponse(error, data) {
                                      return regions[rindex].id;
                                    });
 
-          svg.selectAll("path")
+          coverG.selectAll("path")
              .filter(function(d) { return ids.indexOf(d.properties.GEOID10) > -1 })
              .transition()
              .duration(500)
              .delay(function(d, i) { return 200 + i*10; })
-             .attr("opacity", .5)
-             .style("fill", "green");
+             .attr("opacity", 1);
 
           svg.selectAll("circle")
              .filter(function(d) {
