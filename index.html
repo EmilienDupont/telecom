@@ -416,7 +416,11 @@ var svg = d3.select("#demoarea")
               .attr("height", height)
               .on("mousedown", addPoint);
 
+// G object for background
 var backgroundG = svg.append("g");
+
+// G object for map
+var mapG = svg.append("g");
 
 backgroundG.append("rect")
            .attr("x", 0).attr("y", 0)
@@ -457,6 +461,7 @@ var color = d3.scale.threshold()
 
 var data;
 var regions;
+var county;
 
 d3.json("capecod.json", function(error, capecod) {
   if (error) throw error;
@@ -468,30 +473,32 @@ d3.json("capecod.json", function(error, capecod) {
                              };
                       });
 
-  var county = capecod;
+  county = capecod;
 
-  svg.selectAll("path")
+  mapG.selectAll("path")
       .data(county.features)
      .enter().append("path")
        .attr("class", "tract")
        .attr("d", path)
        .style("fill", function (d) { return color(d.properties.POP100_RE); })
-     .append("title")
+     .append("title") // what is this?
        .text(function (d) {return d.properties.GEOID10 + " " + d.properties.POP100_RE; });
 });
 
 var towers = [];
 
-function allPointsInCircle(pts, circle) {
-   return pts.every(function (point) {
-       var dist = r_earth_miles * d3.geo.distance(point, [circle.cx, circle.cy]);
-       return dist <= circle.r;
-   });
-}
-
-
 function addPoint() {
    svg.selectAll("text").remove("text");
+
+   mapG.selectAll("path").remove("path");
+
+   // Put original colors back on map
+   mapG.selectAll("path")
+      .data(county.features)
+     .enter().append("path")
+       .attr("class", "tract")
+       .attr("d", path)
+       .style("fill", function (d) { return color(d.properties.POP100_RE); });
 
    var point = d3.mouse(this);
 
@@ -547,6 +554,14 @@ function getRegionCover(cover, regions) {
 }
 
 function compute() {
+  // Put original colors back on map
+  mapG.selectAll("path")
+      .data(county.features)
+     .enter().append("path")
+       .attr("class", "tract")
+       .attr("d", path)
+       .style("fill", function (d) { return color(d.properties.POP100_RE); });
+
   budget = parseInt(document.getElementById("budget").value);
 
   var region_ids = regions.map(function(d) { return d.id; });
