@@ -14,19 +14,7 @@ if 'PORT' in os.environ:
 else:
     PORT = 8000
 
-
 import telecom
-
-def handleoptimize(jsdict):
-    if 'pop' in jsdict and 'sites' in jsdict and 'cost' in jsdict and 'budget' in jsdict:
-        print 'Inside handle optimize!'
-        print jsdict['pop']
-        print jsdict['sites']
-        print jsdict['cost']
-        print jsdict['budget']
-        solution = telecom.optimize(jsdict['pop'], jsdict['sites'], jsdict['cost'], jsdict['budget'])
-        print 'solution', solution
-        return {'solution': solution }
 
 class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
@@ -35,14 +23,14 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
     def do_POST(self):
-        if self.path == '/telecom':
+        if self.path == '/telecom.py':
             ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
             if ctype == 'application/json':
                 length = int(self.headers.getheader('content-length'))
                 data = cgi.parse_qs(self.rfile.read(length), keep_blank_values=1)
                 for val in data:
                     jsdict = json.loads(val)
-                    jsdict = handleoptimize(jsdict)
+                    jsdict = telecom.handleoptimize(jsdict)
                     self.send_response(200)
                     self.send_header('Content-type', 'application/json')
                     self.end_headers()
