@@ -278,6 +278,7 @@ m.optimize()
       <div id="demoarea">
       </div>
       <button class="pure-button" onclick="compute()">Compute</button>
+      <button class="pure-button" onclick="restart()">Restart</button>
     </div>
 
     <div style="min-height:100px"></div>
@@ -587,5 +588,15 @@ function serverResponse(error, data) {
                     .attr("opacity", 1);
       }
    }
+}
+
+function restart() {
+  svg.selectAll("text").remove("text");
+  towerG.selectAll("circle").remove("circle");
+  radiusG.selectAll("circle").remove("circle");
+  // Reset all block fill colors
+  mapG.selectAll("path")
+      .style("fill", function (d) { return color(d.properties.POP100_RE); });
+  towers = [];
 }
 </script>
