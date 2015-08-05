@@ -243,24 +243,38 @@ m.optimize()
       </p>
 
       <p>
-        Cell tower locations are represented by:
+        We have divided Cape Cod into several regions. The population
+        of each region has been determined using US Census data.
+        The larger the population of the region, the darker its color.
+      </p>
+
+      <p>
+        You can add potential cell tower locations by clicking the map.
+      </p>
+
+      <p>
+        They are represented by:
 	<svg height="20" width="20">
-	  <circle cx="10" cy="10" r="8" stroke="rgb(10,10,10)" stroke-width="3" fill="rgb(80,80,80)" />
+	  <circle cx="10" cy="10" r="8" stroke="rgb(210,210,210)" stroke-width="3" fill="rgb(250,250,250)" />
 	</svg>
       </p>
-
+      
       <p>
-        The area has been split into regions of equal population, each
-        of them represented by a polygon on the map. To add an extra
-        region, simply click on the map.
+        The radius of the towers (8 miles) will also be shown.
       </p>
 
       <p>
-        To compute the optimal location of cell towers click "Compute".
+        Click "Compute" to determine the location of cell towers which
+        maximizes the population which has signal.
         If the tower is built, the cell tower location and the regions
-        that are covered will turn green. Note that a region is considered
+        that are covered will turn yellow. Note that a region is considered
         to be covered only if it is entirely covered by <em>one</em> cell
         tower.
+      </p>
+
+      <p>
+        Click "Restart" if you wish to remove your current choice of cell
+        tower locations.
       </p>
 
       <p>
