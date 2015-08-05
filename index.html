@@ -258,7 +258,7 @@ m.optimize()
 	  <circle cx="10" cy="10" r="8" stroke="rgb(210,210,210)" stroke-width="3" fill="rgb(250,250,250)" />
 	</svg>
       </p>
-      
+
       <p>
         The radius of the towers (8 miles) will also be shown.
       </p>
@@ -282,8 +282,8 @@ m.optimize()
         you can vary this using the slider below.
       </p>
 
-      <input type="range" min = 1 max = 10 step = 1 id="budget" value="5" oninput="outputUpdate(value)" class="slider-width">
-      <output for=budget id=costDisplay>5</output> Towers
+      <input type="range" min=1 max=10 step=1 id="budget" value="3" oninput="outputUpdate(value)" class="slider-width">
+      <output for=budget id=costDisplay>3</output> Towers
       <script>
       function outputUpdate(value) {
         document.querySelector('#costDisplay').value = value;
@@ -291,8 +291,8 @@ m.optimize()
       </script>
       <div id="demoarea">
       </div>
-      <button class="pure-button" onclick="compute()">Compute</button>
-      <button class="pure-button" onclick="restart()">Restart</button>
+      <button onclick="compute()">Compute</button>
+      <button onclick="restart()">Restart</button>
     </div>
 
     <div style="min-height:100px"></div>
@@ -407,23 +407,40 @@ d3.json("capecod.json", function(error, capecod) {
        .attr("d", path)
        .attr("opacity", 0)
        .on("mousedown", addPoint);
+
+
+  var initial_towers = [[-70.495,41.695],
+                        [-70.139,41.682],
+                        [-69.963,41.737],
+                        [-70.005,41.932],
+                        [-70.059,42.009]];
+
+  initial_towers.map(function(d) { addPointHelper(proj(d), false); });
+
 });
 
 var towers = [];
 
 function addPoint() {
-   svg.selectAll("text").remove("text");
-
-   towerG.selectAll("circle").attr("fill", "rgb(250,250,250)")
-      .attr("stroke", "rgb(210,210,210)");
-
-   radiusG.selectAll("circle").attr("opacity", .2).attr("fill", "white");
-
-   // Reset all block fill colors
-   mapG.selectAll("path")
-       .style("fill", function (d) { return color(d.properties.POP100_RE); });
-
    var point = d3.mouse(this);
+
+   addPointHelper(point, true)
+}
+
+function addPointHelper(point, refresh) {
+
+   if (refresh) {
+      svg.selectAll("text").remove("text");
+
+      towerG.selectAll("circle").attr("fill", "rgb(250,250,250)")
+        .attr("stroke", "rgb(210,210,210)");
+
+      radiusG.selectAll("circle").attr("opacity", .2).attr("fill", "white");
+
+      // Reset all block fill colors
+      mapG.selectAll("path")
+         .style("fill", function (d) { return color(d.properties.POP100_RE); });
+   }
 
    var lonlat = proj.invert(point);
    var tower = { cx: lonlat[0], cy: lonlat[1], r: 8 };
