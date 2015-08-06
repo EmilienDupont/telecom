@@ -35,6 +35,18 @@
   stroke: #333;
 }
 
+.key path {
+  display: none;
+}
+
+.key line {
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.caption {
+  font-weight: bold;
+}
 </style>
 <body>
   <ul id="nav">
@@ -327,6 +339,12 @@ var backgroundG = svg.append("g");
 // G object for state outline
 var maG = svg.append("g");
 
+// G object for population scale
+var scaleG = svg.append("g")
+              .attr("class", "key")
+              .attr("transform", "translate(40,40)");
+
+
 // G object for map
 var mapG = svg.append("g");
 
@@ -335,6 +353,9 @@ var radiusG = svg.append("g");
 
 // G object for towers
 var towerG = svg.append("g");
+
+// G object for text
+var textG = svg.append("g");
 
 // Clickable G object
 // (needs to be above all other layers to always be clickable)
@@ -375,9 +396,42 @@ function allPointsInCircle(pts, circle) {
 
 
 var color = d3.scale.threshold()
-    .domain([1, 200, 500, 600, 800, 1000, 2000])
-    //.range(["#fff7ec", "#fee8c8", "#fdd49e", "#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#b30000", "#7f0000"]);
-    .range(["#ffffe5", "#f7fcb9","#d9f0a3","#addd8e","#78c679","#41ab5d","#238443","#006837","#004529"]);
+    .domain([1, 800, 1200, 2000, 3000])
+    .range(["#d9f0a3","#addd8e","#78c679","#41ab5d","#238443"]);
+
+
+var x = d3.scale.linear()
+        .domain([0,3000])
+        .range([0, 320])
+
+var xAxis = d3.svg.axis()
+             .scale(x)
+             .orient("bottom")
+             .tickSize(13)
+             .tickValues(color.domain())
+
+var myrange = color.range();
+
+scaleG.selectAll("rect")
+     .data(myrange.map(function(d, i) {
+                                 var tmp = {
+                                  x0: i ? x(color.domain()[i-1]) : x.range()[0],
+                                  x1: i < color.domain().length ? x(color.domain()[i]) : x.range()[1],
+                                   z: d
+                                 };
+                                 console.log(tmp);
+                                 return tmp;
+                             }))
+    .enter().append("rect")
+        .attr("height", 8)
+        .attr("x", function (d) { return d.x0 })
+        .attr("width", function (d) { return d.x1 - d.x0; })
+        .style("fill", function (d) { return d.z; });
+
+scaleG.call(xAxis).append("text")
+      .attr("class", "caption")
+      .attr("y", -6)
+      .text("Population count")
 
 var data;
 var regions;
@@ -411,7 +465,10 @@ function makeMyMap(error, capecod, ma) {
      .enter().append("path")
        .attr("class", "tract")
        .attr("d", path)
-       .style("fill", function (d) { return color(d.properties.POP100_RE); })
+       .style("fill", function (d) {
+                                     var clr = color(d.properties.POP100_RE);
+                                     return clr;
+                                   })
      .append("title") // what is this?
        .text(function (d) {return d.properties.GEOID10 + " " + d.properties.POP100_RE; });
 
@@ -445,7 +502,7 @@ function addPoint() {
 function addPointHelper(point, refresh) {
 
    if (refresh) {
-      svg.selectAll("text").remove("text");
+      textG.selectAll("text").remove("text");
 
       towerG.selectAll("circle").attr("fill", "rgb(250,250,250)")
         .attr("stroke", "rgb(210,210,210)");
@@ -510,7 +567,7 @@ function getRegionCover(cover, regions) {
 }
 
 function compute() {
-  svg.selectAll("text").remove("text");
+  textG.selectAll("text").remove("text");
 
   towerG.selectAll("circle").attr("fill", "rgb(250,250,250)")
       .attr("stroke", "rgb(210,210,210)");
@@ -615,7 +672,7 @@ function serverResponse(error, data) {
 
           covered = covered_pop / total_pop; // percentage of population
 
-          svg.selectAll("text").remove("text");
+          textG.selectAll("text").remove("text");
 
           var coveredText = svg.append("text")
               .text(formatAsPercentage(covered) + " Coverage")
@@ -637,7 +694,7 @@ function serverResponse(error, data) {
 }
 
 function restart() {
-  svg.selectAll("text").remove("text");
+  textG.selectAll("text").remove("text");
   towerG.selectAll("circle").remove("circle");
   radiusG.selectAll("circle").remove("circle");
   // Reset all block fill colors
