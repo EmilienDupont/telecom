@@ -572,14 +572,14 @@ function serverResponse(error, data) {
           towerG.selectAll("circle")
              .attr("fill", function(d) {
                               if (solTowers.indexOf(d.id) > -1) {
-                                    return "yellow";
+                                    return "red";
                               } else {
                                     return "rgb(80,80,80)";
                               }
                            })
              .attr("stroke", function(d) {
                               if (solTowers.indexOf(d.id) > -1) {
-                                    return "rgb(204,204,0)";
+                                    return "rgb(10,10,10)";
                               } else {
                                     return "rgb(10,10,10)";
                               }
