@@ -342,7 +342,7 @@ var maG = svg.append("g");
 // G object for population scale
 var scaleG = svg.append("g")
               .attr("class", "key")
-              .attr("transform", "translate(40,40)");
+              .attr("transform", "translate(40,20)");
 
 
 // G object for map
@@ -402,7 +402,7 @@ var color = d3.scale.threshold()
 
 var x = d3.scale.linear()
         .domain([0,3000])
-        .range([0, 320])
+        .range([0, 300])
 
 var xAxis = d3.svg.axis()
              .scale(x)
