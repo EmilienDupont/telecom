@@ -306,6 +306,7 @@ m.optimize()
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
 <script>
 
 var budget = 5;
@@ -322,6 +323,9 @@ var svg = d3.select("#demoarea")
 
 // G object for background
 var backgroundG = svg.append("g");
+
+// G object for state outline
+var maG = svg.append("g");
 
 // G object for map
 var mapG = svg.append("g");
@@ -379,7 +383,12 @@ var data;
 var regions;
 var county;
 
-d3.json("capecod.json", function(error, capecod) {
+queue()
+    .defer(d3.json, "capecod.json")
+    .defer(d3.json, "ma.json")
+    .await(makeMyMap);
+
+function makeMyMap(error, capecod, ma) {
   if (error) throw error;
 
   data = capecod;
@@ -390,6 +399,12 @@ d3.json("capecod.json", function(error, capecod) {
                       });
 
   county = capecod;
+
+  maG.append("path")
+   .datum(ma)
+   .attr("stroke", "black")
+   .attr("fill", "LightSalmon")
+   .attr("d", path);
 
   mapG.selectAll("path")
       .data(county.features)
@@ -417,7 +432,7 @@ d3.json("capecod.json", function(error, capecod) {
 
   initial_towers.map(function(d) { addPointHelper(proj(d), false); });
 
-});
+}
 
 var towers = [];
 
