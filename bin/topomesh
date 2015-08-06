@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+var fs = require("fs");
+var topojson = require("topojson")
+var name = process.argv[2];
+
+var topology = JSON.parse(fs.readFileSync("/dev/stdin"))
+var merged = topojson.mesh(topology, topology.objects[name], function (a, b) { return a === b});
+console.log(JSON.stringify(merged));

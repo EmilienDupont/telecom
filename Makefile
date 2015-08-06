@@ -1,5 +1,6 @@
 GENERATED_FILES = \
-	capecod.json
+	capecod.json \
+        ma.json
 
 all: $(GENERATED_FILES)
 	./SimpleServer.py
@@ -23,5 +24,17 @@ build/CENSUS2010BLOCKGROUPS_POLY.shp: build/tracts.zip
 build/tracts.shp: build/CENSUS2010BLOCKGROUPS_POLY.shp
 	ogr2ogr -f "ESRI Shapefile" -where "COUNTYFP10 = '001'" -t_srs EPSG:4269 $@ $<
 
+build/ma.shp: build/CENSUS2010BLOCKGROUPS_POLY.shp
+	ogr2ogr -f "ESRI Shapefile" -where "COUNTYFP10 = '023' or COUNTYFP10 = '007'" -t_srs EPSG:4269 $@ $<
+
 capecod.json: build/tracts.shp
 	ogr2ogr -f GeoJSON $@ $<
+
+build/maunmerged.json: build/ma.shp
+	ogr2ogr -f GeoJSON $@ $<
+
+build/maunmerged.topojson: build/maunmerged.json
+	node_modules/topojson/bin/topojson -o $@ -- $<
+
+ma.json: build/maunmerged.topojson
+	cat $< | bin/topomesh maunmerged > $@

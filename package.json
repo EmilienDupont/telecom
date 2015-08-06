@@ -1,0 +1,9 @@
+{
+  "name": "anonymous",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "d3": "3",
+    "topojson": "1.6.19"
+  }
+}
