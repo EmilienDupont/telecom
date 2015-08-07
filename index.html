@@ -677,12 +677,12 @@ function serverResponse(error, data) {
           var coveredText = svg.append("text")
               .text(formatAsPercentage(covered) + " Coverage")
               .attr("x", width/2)
-              .attr("y", 40)
+              .attr("y", 80)
               .attr("font-family", "sans-serif")
               .attr("font-size", "20px")
               .attr("font-weight", 700)
               .attr("fill", "white")
-              .attr("stroke", "black")
+              .attr("stroke", "none")
               .attr("text-anchor", "middle")
               .attr("opacity", 0);
 
