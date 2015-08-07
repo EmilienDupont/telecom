@@ -674,7 +674,7 @@ function serverResponse(error, data) {
 
           textG.selectAll("text").remove("text");
 
-          var coveredText = svg.append("text")
+          var coveredText = textG.append("text")
               .text(formatAsPercentage(covered) + " Coverage")
               .attr("x", width/2)
               .attr("y", 80)
