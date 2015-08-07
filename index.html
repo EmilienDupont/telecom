@@ -616,8 +616,8 @@ function serverResponse(error, data) {
 
           mapG.selectAll("path")
              .transition()
-             .duration(500)
-             .delay(function(d, i) { return 200 + i*10; })
+             .duration(150)
+             .delay(function(d, i) { return 10 + 2*i; })
              .style("fill", function (d) {
                                 if (ids.indexOf(d.properties.GEOID10) > -1) {
                                    return "yellow";
