@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from gurobipy import *
+import StringIO
 
 # Sample data
 # units = thousands of people
@@ -11,12 +12,17 @@ sites = [[0,1,3], [1,2,4], [3,6,7,9], [4,5,7,8], [7,8,11],
 cost = [1.8, 1.3, 4.0, 3.5, 3.8, 2.6, 2.1]
 budget = 10;
 
+def mycallback(model, where):
+    if where == GRB.callback.MESSAGE:
+        print >>model.__output, model.cbGet(GRB.callback.MSG_STRING),
 
 def optimize(pop, sites, cost, budget, output=False):
     numR = len(pop) # Number of regions
     numT = len(sites) # Number of sites for towers
 
     m = Model()
+
+    m.setParam('TimeLimit', 10)
 
     if not output:
         m.params.OutputFlag = 0
@@ -39,7 +45,13 @@ def optimize(pop, sites, cost, budget, output=False):
 
     m.setObjective(quicksum( pop[j]*r[j] for j in range(numR) ), GRB.MAXIMIZE)
 
-    m.optimize()
+    output = StringIO.StringIO()
+    m.__output = output
+
+    m.optimize(mycallback)
+
+    if (m.status != 2):
+        return ["error"]
 
     selTowers = []
     selRegions = []
@@ -52,7 +64,7 @@ def optimize(pop, sites, cost, budget, output=False):
         if r[j].X > 0.5:
             selRegions.append(j)
 
-    return [selTowers, selRegions]
+    return [selTowers, selRegions, output.getvalue()]
 
 def handleoptimize(jsdict):
     if 'pop' in jsdict and 'sites' in jsdict and 'cost' in jsdict and 'budget' in jsdict:
