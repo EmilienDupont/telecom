@@ -239,7 +239,7 @@ for j in range(numR):
 m.update()
 
 for j in range(numR):
-  m.addConstr(quicksum( cover[(i,j)]*t[i] for i in range(numT) ) &gt;= r[j])
+  m.addConstr(quicksum(t[i] for i in range(numT) if j in sites[i]) &gt;= r[j])
 
 m.addConstr(quicksum( cost[i]*t[i] for i in range(numT) ) &lt;= budget)
 
