@@ -22,10 +22,11 @@ def optimize(pop, sites, cost, budget, output=False):
 
     m = Model()
 
-    m.setParam('TimeLimit', 10)
 
     if not output:
         m.params.OutputFlag = 0
+
+    m.setParam('TimeLimit', 10)
 
     t = {} # Binary variables for each site
     r = {} # Binary variable for each community
