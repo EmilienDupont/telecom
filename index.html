@@ -319,6 +319,7 @@ m.optimize()
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/1.2.7/spin.min.js"></script>
 <script>
 
 var budget = 5;
@@ -457,7 +458,7 @@ function makeMyMap(error, capecod, ma) {
   maG.append("path")
    .datum(ma)
    .attr("stroke", "black")
-   .attr("fill", "LightSalmon")
+   .attr("fill", "rgb(220,220,220)")
    .attr("d", path);
 
   mapG.selectAll("path")
@@ -469,7 +470,7 @@ function makeMyMap(error, capecod, ma) {
                                      var clr = color(d.properties.POP100_RE);
                                      return clr;
                                    })
-     .append("title") // what is this?
+     .append("title")
        .text(function (d) {return d.properties.GEOID10 + " " + d.properties.POP100_RE; });
 
   clickableG.selectAll("path")
@@ -574,6 +575,26 @@ function compute() {
 
   radiusG.selectAll("circle").attr("opacity", .2).attr("fill", "white");
 
+  // Show loading screen
+  spinnerG.append("rect")
+          .attr("x", 0).attr("y", 0)
+          .attr("width", width).attr("height", height)
+          .attr("fill", "white")
+          .attr("opacity", .5);
+
+  spinnerG.append("text")
+          .attr("x", width/2)
+          .attr("y", .4*height)
+          .attr("font-size", 25)
+          .attr("font-family", "Helvetica Neue")
+          .attr("font-weight", 400)
+          .attr("text-anchor", "middle")
+          .text("Computing...");
+
+  var target = document.getElementById('demoarea');
+  spinner = new Spinner({left: '375%'}).spin(target);
+
+
   budget = parseInt(document.getElementById("budget").value);
 
   var region_ids = regions.map(function(d) { return d.id; });
@@ -602,6 +623,11 @@ function serverResponse(error, data) {
    console.log('data', data);
    if (!error) {
       if ('solution' in data) {
+          // Remove loading screen
+          spinnerG.selectAll("rect").remove("rect");
+          spinnerG.selectAll("text").remove("text");
+          spinner.stop();
+
           // Import solution and put it into correct format
           var solution = data['solution'];
           var solTowers = solution[0];
@@ -616,8 +642,8 @@ function serverResponse(error, data) {
 
           mapG.selectAll("path")
              .transition()
-             .duration(150)
-             .delay(function(d, i) { return 10 + 2*i; })
+             .duration(400)
+             .delay(function(d, i) { return 10 + 6*i; })
              .style("fill", function (d) {
                                 if (ids.indexOf(d.properties.GEOID10) > -1) {
                                    return "yellow";
@@ -629,14 +655,14 @@ function serverResponse(error, data) {
           towerG.selectAll("circle")
              .attr("fill", function(d) {
                               if (solTowers.indexOf(d.id) > -1) {
-                                    return "red";
+                                    return "rgb(0,200,0)";
                               } else {
                                     return "rgb(80,80,80)";
                               }
                            })
              .attr("stroke", function(d) {
                               if (solTowers.indexOf(d.id) > -1) {
-                                    return "rgb(10,10,10)";
+                                    return "rgb(0,80,0)";
                               } else {
                                     return "rgb(10,10,10)";
                               }
