@@ -22,6 +22,8 @@ def optimize(pop, sites, cost, budget, output=False):
 
     m = Model()
 
+    m.setParam('TimeLimit', 10)
+
     if not output:
         m.params.OutputFlag = 0
 
@@ -47,6 +49,9 @@ def optimize(pop, sites, cost, budget, output=False):
     m.__output = output
 
     m.optimize(mycallback)
+
+    if (m.status != 2):
+        return ["error"]
 
     selTowers = []
     selRegions = []
