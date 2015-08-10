@@ -11,7 +11,7 @@ test:
 clean:
 	-rm -rf -- $(GENERATED_FILES) build gurobi.log *.pyc *.lp
 
-
+# Data from http://www.mass.gov/anf/research-and-tech/it-serv-and-support/application-serv/office-of-geographic-information-massgis/datalayers/census2010.html
 build/tracts.zip:
 	mkdir build
 	curl -o $@ 'http://wsgw.mass.gov/data/gispub/shape/census2010/CENSUS2010_BLK_BG_TRCT_SHP.zip'
