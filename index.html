@@ -168,13 +168,57 @@
       <p>
         We then create a bipartite graph $G(T, R, E)$ and place an edge $(i,j)$
         in $E$ if region $j$ is covered by tower $i$.
-        At least one tower that covers a
-        region must be selected, for that region to be covered. This yields the constraint
+        At least one tower that covers a region must be selected, for that region to be covered.
+        This yields the constraint
         \[
         \sum_{(i, j) \in E} t_{i} \geq r_j
         \]
         for each region $r_j \in R$
       </p>
+
+      <div id=bipartite>
+      </div>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+      <script>
+      //Width and height
+      var width = 700;
+      var height = 400;
+      var padding = 50;
+
+      var svg = d3.select("#bipartite")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+
+      towers = [0,1,2];
+      regions = [3,4,5,6,7,8,9,10];
+      edges = [[0,3], [0,4], [0,5], [0,8], [0,9],
+               [1,4], [1,6], [1,7], [1,8], [1,10],
+               [2,3], [2,5], [2,6], [2,7], [2,9], [2,10]];
+
+      towerG = svg.append("g");
+      regionG = svg.append("g");
+      lineG = svg.append("g");
+
+      var nodesT = towerG.selectAll("circle")
+                         .data(towers)
+                         .enter()
+                         .append("circle")
+                         .attr("cx", 100)
+                         .attr("cy", function(d) { return (height - 2*padding)*(d+1)/towers.length; } )
+                         .attr("r", 10)
+                         .attr("id", function(d) { return "n" + String(d); });
+
+      var nodesR = towerG.selectAll("circle")
+                         .data(regions)
+                         .enter()
+                         .append("circle")
+                         .attr("cx", 400)
+                         .attr("cy", function(d) { return (height - 2*padding)*(d+1-towers.length)/regions.length; } )
+                         .attr("r", 10)
+                         .attr("id", function(d) { return "n" + String(d); });;
+      </script>
 
       <p>
         In addition, we cannot exceed the allocated budget. So we have the
