@@ -185,6 +185,8 @@
       var width = 700;
       var height = 400;
       var padding = 50;
+      var id;
+      var nodesToColor;
 
       var svg = d3.select("#bipartite")
                     .append("svg")
@@ -242,15 +244,34 @@
                         .attr("y2", function(d) { return regions[d[1]-3][1]; })
                         .attr("stroke", "black")
                         .attr("stroke-width", 3)
-                        .attr("id", function(d) { return "e" + String(d[0]) + "," + String(d[1]); })
+                        .attr("id", function(d) { return "e" + String(d[0]) + "e" + String(d[1]); })
                         .attr("opacity", .1);
 
       function towerhover() {
-
+        d3.select(this).attr("fill", "red");
+        id = d3.select(this).attr("id");
+        id = id.slice(1);
+        id = parseInt(id);
+        console.log('id', id);
+        nodesToColor = [];
+        for (var i = 0; i < edges.length; i++) {
+          var edge = edges[i];
+          if (edge[0] === id) {
+            nodesToColor.push(edge[1]);
+            d3.select("#e" + String(edge[0]) + "e" + String(edge[1])).attr("opacity", 1);
+          }
+        }
+        for (var i = 0; i < nodesToColor.length; i++) {
+          d3.select("#n" + String(nodesToColor[i])).attr("fill", "red");
+        }
       }
 
       function towerstop() {
-
+        d3.select(this).attr("fill", "black");
+        for (var i = 0; i < nodesToColor.length; i++) {
+          d3.select("#n" + String(nodesToColor[i])).attr("fill", "black");
+        }
+        lines.attr("opacity", .1);
       }
       </script>
 
