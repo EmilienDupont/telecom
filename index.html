@@ -223,9 +223,9 @@
       }
       console.log('regions', regions);
 
-      edges = [[0,3], [0,4], [0,5], [0,8], [0,9],
+      edges = [[0,3], [0,5], [0,8], [0,9],
                [1,4], [1,6], [1,7], [1,8], [1,10],
-               [2,3], [2,5], [2,6], [2,7], [2,9], [2,10]];
+               [2,5], [2,6], [2,9], [2,10]];
 
       edgesG = svg.append("g");
       towerG = svg.append("g");
@@ -241,9 +241,9 @@
                          .attr("id", function(d,i) { return "n" + String(i); })
                          .attr("fill", "gray")
                          .attr("stroke-width", 2)
-                         .attr("stroke", "none")
-                         .on("mouseover", towerhover)
-                         .on("mouseout", towerstop);
+                         .attr("stroke", "black")
+                         .on("mouseover", nodehover)
+                         .on("mouseout", nodestop);
 
       var nodesR = regionG.selectAll("circle")
                          .data(regions)
@@ -255,7 +255,9 @@
                          .attr("id", function(d,i) { return "n" + String(i+3); })
                          .attr("fill", "gray")
                          .attr("stroke-width", 2)
-                         .attr("stroke", "none");
+                         .attr("stroke", "black")
+                         .on("mouseover", nodehover)
+                         .on("mouseout", nodestop);
 
       var lines = edgesG.selectAll("line")
                         .data(edges)
@@ -270,31 +272,41 @@
                         .attr("id", function(d) { return "e" + String(d[0]) + "e" + String(d[1]); })
                         .attr("opacity", .1);
 
-      function towerhover() {
-        d3.select(this).attr("stroke", "red");
+      function nodehover() {
         id = d3.select(this).attr("id");
         id = id.slice(1);
         id = parseInt(id);
         console.log('id', id);
         nodesToColor = [];
+        if (id < 3) {
+          d3.select(this).attr("fill", "red");
+          boolArray = [0,1]; // If it's a tower, go in direction of edges
+        } else {
+          d3.select(this).attr("fill", "rgb(0,220,0)");
+          boolArray = [1,0]; // If it's a region, go in the opposite direction
+        }
         // Color edges
         for (var i = 0; i < edges.length; i++) {
           var edge = edges[i];
-          if (edge[0] === id) {
-            nodesToColor.push(edge[1]);
+          if (edge[boolArray[0]] === id) {
+            nodesToColor.push(edge[boolArray[1]]);
             d3.select("#e" + String(edge[0]) + "e" + String(edge[1])).attr("opacity", 1);
           }
         }
         // Color nodes
         for (var i = 0; i < nodesToColor.length; i++) {
-          d3.select("#n" + String(nodesToColor[i])).attr("stroke", "red");
+          if (boolArray[0] === 0) {
+            d3.select("#n" + String(nodesToColor[i])).attr("fill", "rgb(0,220,0)");
+          } else {
+            d3.select("#n" + String(nodesToColor[i])).attr("fill", "red");
+          }
         }
       }
 
-      function towerstop() {
-        d3.select(this).attr("stroke", "none");
+      function nodestop() {
+        d3.select(this).attr("fill", "gray");
         for (var i = 0; i < nodesToColor.length; i++) {
-          d3.select("#n" + String(nodesToColor[i])).attr("stroke", "none");
+          d3.select("#n" + String(nodesToColor[i])).attr("fill", "gray");
         }
         lines.attr("opacity", .1);
       }
