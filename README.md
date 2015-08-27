@@ -16,10 +16,3 @@ An example of using Gurobi to cell twoer coverage problem.
 
 4. Click "Compute" to locate the towers.
 
-# Performing an optimization
-
-To just solve the model (without running a web server) do:
-
-```
-make test
-```
