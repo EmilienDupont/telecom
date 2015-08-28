@@ -96,7 +96,7 @@ a:hover.screenshot {
       <h2><a href="#problem" name="problem">Problem Description</a></h2>
 
       <div style="float:right;">
-        <a href="https://en.wikipedia.org/wiki/Cell_site">
+        <a href="https://en.wikipedia.org/wiki/Cell_site#/media/File:Cell_Phone_Tower.jpg">
           <img src="cellphonetower.jpg" alt="Cell tower" style="width:200px;">
         </a>
       </div>
@@ -117,7 +117,7 @@ a:hover.screenshot {
       </p>
 
       <p>
-        The towers have a fixed range and due to budget constraints, only a
+        The towers have a fixed range, and due to budget constraints only a
         limited number of them can be built. Given these restrictions, the
         company wishes to provide coverage to as large a fraction of the
         population as possible.
@@ -129,7 +129,9 @@ a:hover.screenshot {
         population.
       </p>
 
-      <aside>A typical cell phone tower.</aside>
+      <aside>A typical cell phone tower.
+      <span style="font-size: 10px">Source: <a href="https://en.wikipedia.org/wiki/Cell_site#/media/File:Cell_Phone_Tower.jpg">Joe Ravi</a> - <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en">CC BY-SA 3.0</a></span>
+      </aside>
 
       <p>
         The goal is then to choose at which of the potential locations the
@@ -191,8 +193,8 @@ a:hover.screenshot {
 
       <aside>
         Example of a bipartite graph for 3 towers and 8 regions. Hover over
-        the different towers to see which region they cover. For example, tower
-        1 covers region 1, 2, 3, 6 and 7.
+        the different towers/regions to see which region/tower they cover/are covered by.
+        For example, tower 1 covers region 1, 2, 3, 6 and 7.
       </aside>
 
       <div id=bipartite>
@@ -438,12 +440,12 @@ m.optimize()
       </p>
 
       <p>
-        The budget currently allows for the construction of 5 towers, but
+        The budget currently allows for the construction of 4 towers, but
         you can vary this using the slider below.
       </p>
 
-      <input type="range" min=1 max=10 step=1 id="budget" value="3" oninput="outputUpdate(value)" class="slider-width">
-      <output for=budget id=costDisplay>3</output> Towers
+      <input type="range" min=1 max=10 step=1 id="budget" value="4" oninput="outputUpdate(value)" class="slider-width">
+      <output for=budget id=costDisplay>4</output> Towers
       <script>
       function outputUpdate(value) {
         document.querySelector('#costDisplay').value = value;
