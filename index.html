@@ -193,7 +193,7 @@ a:hover.screenshot {
 
       <aside>
         Example of a bipartite graph for 3 towers and 8 regions. Hover over
-        the different towers/regions to see which region/tower they cover/are covered by.
+        the different towers and regions to see how they are covered.
         For example, tower 1 covers region 1, 2, 3, 6 and 7.
       </aside>
 
@@ -341,9 +341,9 @@ a:hover.screenshot {
 
         \[
        \begin{array}{ll}
-       \text{maximize} & \sum_{j \in R} p_j r_j \\
-       \text{subject to} & \sum_{(i, j) \in E}  t_{i} \geq r_j \quad \forall r_j \in R\\
-                         & \sum_{i \in T} c_{i} t_{i} \leq \text{budget} \\
+       \text{maximize} & {\displaystyle \sum_{j \in R} p_j r_j} \\
+       \text{subject to} & {\displaystyle \sum_{(i, j) \in E}  t_{i}} \geq r_j \quad \forall r_j \in R\\
+                         & {\displaystyle \sum_{i \in T} c_{i} t_{i}} \leq \text{budget} \\
                          & t_i \in \{ 0, 1 \} \\
                          & r_j \in \{ 0, 1 \}
        \end{array}
