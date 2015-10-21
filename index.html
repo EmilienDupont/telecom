@@ -416,9 +416,6 @@ m.optimize()
 
       <p>
         You can add potential cell tower locations by clicking the map.
-      </p>
-
-      <p>
         They are represented by:
 	<svg height="20" width="20">
 	  <circle cx="10" cy="10" r="8" stroke="rgb(210,210,210)" stroke-width="3" fill="rgb(250,250,250)" />
@@ -426,15 +423,15 @@ m.optimize()
       </p>
 
       <p>
-        The radius of the towers (8 miles) will also be shown.
+        The coverage radius of the towers (8 miles) is also shown.
       </p>
 
       <p>
         Click "Compute" to determine the location of cell towers which
-        maximizes the population which has signal.
+        maximizes the population that has signal.
         If the tower is built, the cell tower location and the regions
         that are covered will turn yellow. Note that a region is considered
-        to be covered only if it is entirely covered by <em>one</em> cell
+        to be covered only if it is entirely covered by <em>a single</em> cell
         tower.
       </p>
 
@@ -445,7 +442,7 @@ m.optimize()
 
       <p>
         The budget currently allows for the construction of 4 towers, but
-        you can vary this using the slider below.
+        you can increase the budget by using the slider below.
       </p>
 
       <input type="range" min=1 max=10 step=1 id="budget" value="4" oninput="outputUpdate(value)" class="slider-width">
